@@ -1,3 +1,4 @@
+const AppError = require("../utils/AppError");
 
 const USERS = [];// fake database
 
@@ -18,6 +19,10 @@ class UsersController {
 
   create(request, response) {
     const { name, email, password } = request.body;
+
+    if(!name) {
+      throw new AppError("Nome é obrigatório!");
+    }
 
     const newUser = {
       id: Math.floor(Date.now() * Math.random()).toString(36),
