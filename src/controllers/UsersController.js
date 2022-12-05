@@ -1,10 +1,10 @@
 const AppError = require("../utils/AppError");
 
-const USERS = [];// fake database
+const sqliteConnection = require("../database/sqlite");
 
 class UsersController {
   index(request, response) {
-    return response.status(200).json(USERS);
+    return response.status(200).json([]);
   }
 
   show(request, response) {
@@ -17,23 +17,23 @@ class UsersController {
     return response.status(200).json(userExists);
   }
 
-  create(request, response) {
+  async create(request, response) {
     const { name, email, password } = request.body;
 
-    if(!name) {
-      throw new AppError("Nome é obrigatório!");
+    const database = await sqliteConnection();
+
+    // OUTRA MANEIRA DE MONTAR A QUERY
+    // const userAlreadyExists = await database.get("SELECT * FROM users WHERE email = (?)", [email]);
+
+    const userAlreadyExists = await database.get(`SELECT * FROM users WHERE email = '${email}'`);
+
+    if (userAlreadyExists) {
+      throw new AppError("Este e-mail já está em uso!")
     }
 
-    const newUser = {
-      id: Math.floor(Date.now() * Math.random()).toString(36),
-      name,
-      email,
-      password
-    }
-
-    USERS.push(newUser);
-
-    return response.status(201).json(newUser);
+    return response.status(201).json({
+      message: "Usuário criado!"
+    });
   }
 }
 
