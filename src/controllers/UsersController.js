@@ -22,14 +22,22 @@ class UsersController {
 
     const database = await sqliteConnection();
 
+    const userAlreadyExists = await database.get("SELECT * FROM users WHERE email = (?)", [email]);
     // OUTRA MANEIRA DE MONTAR A QUERY
-    // const userAlreadyExists = await database.get("SELECT * FROM users WHERE email = (?)", [email]);
-
-    const userAlreadyExists = await database.get(`SELECT * FROM users WHERE email = '${email}'`);
+    // const userAlreadyExists = await database.get(`SELECT * FROM users WHERE email = '${email}'`);
 
     if (userAlreadyExists) {
       throw new AppError("Este e-mail já está em uso!")
     }
+
+    await database.run(
+      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)", 
+      [name, email, password]
+    );
+    // OUTRA MANEIRA DE MONTAR A QUERY
+    // await database.run(
+    //   `INSERT INTO users (name, email, password) VALUES ('${name}', '${email}', '${password}')`
+    // );
 
     return response.status(201).json({
       message: "Usuário criado!"
