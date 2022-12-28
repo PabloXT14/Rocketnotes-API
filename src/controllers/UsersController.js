@@ -4,6 +4,7 @@ const AppError = require("../utils/AppError");
 const sqliteConnection = require("../database/sqlite");
 
 class UsersController {
+
   async index(request, response) {
     const database = await sqliteConnection();
 
@@ -12,14 +13,18 @@ class UsersController {
     return response.status(200).json(users);
   }
 
-  show(request, response) {
+  async show(request, response) {
     const { id } = request.params;
 
-    const userExists = USERS.find(user => user.id === id)
+    const database = await sqliteConnection();
 
-    if (!userExists) return response.status(404).json({ message: "User doesn't exist!" })
+    const user = await database.get("SELECT * FROM users WHERE id = ?", [id])
 
-    return response.status(200).json(userExists);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return response.status(200).json(user);
   }
 
   async create(request, response) {
@@ -69,8 +74,8 @@ class UsersController {
       throw new AppError("Este e-mail já está em uso!")
     }
 
-    user.name = name;
-    user.email = email;
+    user.name = name ?? user.name;
+    user.email = email ?? user.email;
 
     // VERIFICAÇÃO DE ATUALIZAÇÃO DE SENHA
     if (newPassword && !oldPassword) {
