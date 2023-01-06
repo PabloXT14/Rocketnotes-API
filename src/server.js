@@ -11,12 +11,13 @@ const routes = require('./routes');
 const app = express()
 app.use(express.json())
 
-
 app.use(routes);
 
 migrationsRun();
 
 app.use(( error, request, response, next ) => {
+  console.log(error);
+
   if (error instanceof AppError) {
     return response.status(error.statusCode).json({
       status: "error",

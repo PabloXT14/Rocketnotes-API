@@ -6,4 +6,4 @@ exports.up = knex => knex.schema.createTable("links", table => {
   table.integer("note_id").references("id").inTable("notes").onDelete("CASCADE");
 });
 
-exports.down = knex => knex.schema.dropTable("link");
+exports.down = knex => knex.schema.dropTable("links");
