@@ -2,11 +2,22 @@ const knex = require("../database/knex");
 
 class NotesController {
   async index(request, response) {
-    const { user_id } = request.query;
+    const { title, user_id, tags } = request.query;
 
-    const notes = await knex("notes")
-    .where({ user_id })
-    .orderBy("title");
+    let notes;
+
+    const filterTags = tags.split(",").map(tag => tag.trim());
+
+    if (filterTags) {
+      notes = await knex("tags")
+        .whereIn("name", filterTags)
+
+    } else {
+      notes = await knex("notes")
+        .where({ user_id })
+        .whereLike("title", `%${title}%`)
+        .orderBy("title");
+    }
 
     return response.status(200).json(notes);
   }
@@ -26,7 +37,7 @@ class NotesController {
   }
 
   async create(request, response) {
-    const { title, description, tags, links } = request.body; 
+    const { title, description, tags, links } = request.body;
     const { user_id } = request.params;
 
     /* INSERINDO NOTA */
