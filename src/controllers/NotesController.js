@@ -6,12 +6,21 @@ class NotesController {
 
     let notes;
 
-    const filterTags = tags.split(",").map(tag => tag.trim());
+    const filterTags = tags?.split(",").map(tag => tag.trim());
 
     if (filterTags) {
       notes = await knex("tags")
-        .whereIn("name", filterTags)
-
+        .select([
+          "notes.id",
+          "notes.title",
+          "notes.description",
+          "notes.user_id",
+        ])
+        .where("notes.user_id", user_id)
+        .whereLike("notes.title", `%${title}%`)
+        .whereIn("tags.name", filterTags)
+        .innerJoin("notes", "notes.id", "tags.note_id")// InnerJoin(tabela extrangeira, campo da tab ex., campo da tab. atual)
+        .orderBy("notes.title")
     } else {
       notes = await knex("notes")
         .where({ user_id })
