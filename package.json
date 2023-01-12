@@ -1,5 +1,5 @@
 {
-  "name": "api-explorer",
+  "name": "rocketnotes-api",
   "version": "1.0.0",
   "description": "API desenvolvida no programa Explorar da Rocketseat",
   "main": "index.js",
