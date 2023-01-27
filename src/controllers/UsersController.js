@@ -5,20 +5,12 @@ const sqliteConnection = require("../database/sqlite");
 
 class UsersController {
 
-  async index(request, response) {
-    const database = await sqliteConnection();
-
-    const users = await database.all("SELECT * FROM users");
-
-    return response.status(200).json(users);
-  }
-
   async show(request, response) {
-    const { id } = request.params;
+    const user_id = request.user.id;
 
     const database = await sqliteConnection();
 
-    const user = await database.get("SELECT * FROM users WHERE id = ?", [id])
+    const user = await database.get("SELECT * FROM users WHERE id = ?", [user_id])
 
     if (!user) {
       throw new AppError("User not found", 404);
@@ -59,10 +51,10 @@ class UsersController {
 
   async update(request, response) {
     const { name, email, newPassword, oldPassword } = request.body;
-    const { id } = request.params;
+    const user_id = request.user.id;
 
     const database = await sqliteConnection();
-    const user = await database.get("SELECT * FROM users WHERE id = (?)", [id]);
+    const user = await database.get("SELECT * FROM users WHERE id = (?)", [user_id]);
 
     if (!user) {
       throw new AppError("Usuário não encontrado!")
@@ -100,7 +92,7 @@ class UsersController {
       password = ?,
       updated_at = DATETIME('now')
       WHERE id = ?`,
-      [user.name, user.email, user.password, id]
+      [user.name, user.email, user.password, user_id]
     )
 
     return response.status(200).json({ message: "Usuário atualizado!" })
