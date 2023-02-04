@@ -21,6 +21,7 @@ class NotesController {
         .whereLike("notes.title", `%${title}%`)
         .whereIn("tags.name", filterTags)
         .innerJoin("notes", "notes.id", "tags.note_id")// InnerJoin(tabela extrangeira, campo da tab ex., campo da tab. atual)
+        .groupBy("notes.id")
         .orderBy("notes.title")
     } else {
       notes = await knex("notes")
