@@ -1,11 +1,15 @@
+require("dotenv").config();
 const path = require("path");
 
 module.exports = {
   development: {
-    client: 'sqlite3',
-    connection: {
-      filename: path.resolve(__dirname, "src", "database", "database.db"),
-    },
+    client: process.env.DATABASE_CLIENT,
+    connection:
+      process.env.DATABASE_CLIENT === 'sqlite'
+        ? {
+          filename: process.env.DATABASE_URL,
+        }
+        : process.env.DATABASE_URL,
     pool: {
       afterCreate: (connection, callback) => connection.run("PRAGMA foreign_keys = ON", callback)
     },

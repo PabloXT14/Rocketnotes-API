@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "API desenvolvida no programa Explorar da Rocketseat",
   "main": "index.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "nodemon ./src/server.js",
