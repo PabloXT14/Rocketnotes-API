@@ -1,10 +1,6 @@
 require("dotenv").config();
 const path = require("path");
 
-console.log(process.env.DATABASE_CLIENT);
-console.log(process.env.ENVIRONMENT);
-
-
 module.exports = {
   development: {
     client: process.env.DATABASE_CLIENT,
@@ -24,19 +20,8 @@ module.exports = {
   },
   production: {
     client: process.env.DATABASE_CLIENT,
-    connection:
-      process.env.DATABASE_CLIENT === 'sqlite'
-        ? {
-          filename: process.env.DATABASE_URL,
-        }
-        : process.env.DATABASE_URL,
-    pool:
-      process.env.DATABASE_CLIENT === 'sqlite'
-        ? {
-          afterCreate: (connection, callback) => connection.run("PRAGMA foreign_keys = ON", callback)
-        }
-        : {}
-    ,
+    connection: process.env.DATABASE_URL,
+    pool: {},
     migrations: {
       directory: path.resolve(__dirname, "src", "database", "knex", "migrations"),
     },
