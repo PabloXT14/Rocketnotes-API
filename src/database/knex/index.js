@@ -3,8 +3,6 @@ const environment = process.env.ENVIRONMENT;
 const config = require("../../../knexfile");
 const knex = require("knex");
 
-console.log(environment);
+const knexConnection = knex(config[environment]);
 
-const connection = knex(config[environment]);
-
-module.exports = connection;
+module.exports = knexConnection;

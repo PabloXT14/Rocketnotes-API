@@ -26,9 +26,13 @@ module.exports = {
           filename: process.env.DATABASE_URL,
         }
         : process.env.DATABASE_URL,
-    pool: {
-      afterCreate: (connection, callback) => connection.run("PRAGMA foreign_keys = ON", callback)
-    },
+    pool:
+      process.env.DATABASE_CLIENT === 'sqlite'
+        ? {
+          afterCreate: (connection, callback) => connection.run("PRAGMA foreign_keys = ON", callback)
+        }
+        : {}
+    ,
     migrations: {
       directory: path.resolve(__dirname, "src", "database", "knex", "migrations"),
     },
