@@ -1,6 +1,10 @@
 require("dotenv").config();
 const path = require("path");
 
+console.log(process.env.DATABASE_CLIENT);
+console.log(process.env.ENVIRONMENT);
+
+
 module.exports = {
   development: {
     client: process.env.DATABASE_CLIENT,
