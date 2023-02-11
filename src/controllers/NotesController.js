@@ -62,14 +62,14 @@ class NotesController {
     const user_id = request.user.id;
 
     /* INSERINDO NOTA */
-    const [note_id] = await knex("notes").insert({
+    const note_id = await knex("notes").insert({
       title,
       description,
       user_id,
     })
 
     /* INSERINDO LINKS */
-    if (links.length > 0) {
+    if (links && links.length > 0) {
       const linksInsert = links.map(link => {
         return {
           note_id,
@@ -82,7 +82,7 @@ class NotesController {
 
 
     /* INSERINDO TAGS */
-    if (tags.length > 0) {
+    if (tags && tags.length > 0) {
       const tagsInsert = tags.map(tag => {
         return {
           note_id,
