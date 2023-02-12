@@ -68,12 +68,14 @@ class NotesController {
       user_id,
     })
 
+    console.log(`NOTE_ID RETORNADO: ${note_id}`);
+
     /* INSERINDO LINKS */
     if (links && links.length > 0) {
       const linksInsert = links.map(link => {
         return {
           note_id: note_id[0],
-          url: link
+          url: link,
         }
       })
 
