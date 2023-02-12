@@ -62,19 +62,21 @@ class NotesController {
     const user_id = request.user.id;
 
     /* INSERINDO NOTA */
-    const note_id = await knex("notes").insert({
+    const note_id = await knex("notes")
+    .insert({
       title,
       description,
       user_id,
     })
-
-    console.log(`NOTE_ID RETORNADO: ${note_id}`);
+    .then(result => {
+      return result[0];// Retorna o último ID inserido
+    });
 
     /* INSERINDO LINKS */
     if (links && links.length > 0) {
       const linksInsert = links.map(link => {
         return {
-          note_id: note_id[0],
+          note_id,
           url: link,
         }
       })
@@ -87,7 +89,7 @@ class NotesController {
     if (tags && tags.length > 0) {
       const tagsInsert = tags.map(tag => {
         return {
-          note_id: note_id[0],
+          note_id,
           user_id,
           name: tag,
         }
