@@ -72,7 +72,7 @@ class NotesController {
     if (links && links.length > 0) {
       const linksInsert = links.map(link => {
         return {
-          note_id,
+          note_id: note_id[0],
           url: link
         }
       })
@@ -85,7 +85,7 @@ class NotesController {
     if (tags && tags.length > 0) {
       const tagsInsert = tags.map(tag => {
         return {
-          note_id,
+          note_id: note_id[0],
           user_id,
           name: tag,
         }
