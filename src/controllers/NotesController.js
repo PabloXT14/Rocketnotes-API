@@ -63,13 +63,14 @@ class NotesController {
 
     /* INSERINDO NOTA */
     const note_id = await knex("notes")
+    .returning('id')
     .insert({
       title,
       description,
       user_id,
     })
     .then(result => {
-      return result[0];// Retorna o último ID inserido
+      return result[0].id;// Retorna o último ID inserido
     });
 
     /* INSERINDO LINKS */

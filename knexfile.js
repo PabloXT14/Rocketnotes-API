@@ -21,7 +21,6 @@ module.exports = {
   production: {
     client: process.env.DATABASE_CLIENT,
     connection: process.env.DATABASE_URL,
-    pool: {},
     migrations: {
       directory: path.resolve(__dirname, "src", "database", "knex", "migrations"),
     },
