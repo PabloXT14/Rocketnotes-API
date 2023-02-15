@@ -1,4 +1,5 @@
 const knex = require("../database/knex");
+const AppError = require("../utils/AppError");
 
 class NotesController {
   async index(request, response) {
@@ -45,10 +46,15 @@ class NotesController {
 
   async show(request, response) {
     const { id } = request.params;
+    const user_id = request.user.id;
 
-    const note = await knex("notes").where({ id }).first();
+    const note = await knex("notes").where({ id }).andWhere({ user_id }).first();
     const tags = await knex("tags").where({ note_id: id }).orderBy("name");
     const links = await knex("links").where({ note_id: id }).orderBy("created_at");
+
+    if (!note) {
+      throw new AppError("Nota não encontrada no usuário atual", 404);
+    }
 
     return response.json({
       ...note,
@@ -104,8 +110,13 @@ class NotesController {
 
   async delete(request, response) {
     const { id } = request.params;
+    const user_id = request.user.id;
 
-    await knex("notes").where({ id }).delete();
+    const noteDeleted = await knex("notes").where({ id }).andWhere({ user_id }).delete();
+
+    if (!noteDeleted) {
+      throw new AppError("Nota não encontrada no usuário atual", 404);
+    }
 
     return response.status(200).json();
   }
