@@ -19,7 +19,7 @@ class NotesController {
           "notes.user_id",
         ])
         .where("notes.user_id", user_id)
-        .whereLike("notes.title", `%${title}%`)
+        .whereILike("notes.title", `%${title}%`)
         .whereIn("tags.name", filterTags)
         .innerJoin("notes", "notes.id", "tags.note_id")// InnerJoin(tabela extrangeira, campo da tab ex., campo da tab. atual)
         .groupBy("notes.id")
