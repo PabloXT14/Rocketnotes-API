@@ -9,7 +9,7 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "nodemon ./src/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "migrate:dev": "knex migrate:latest",
     "migrate:prod": "knex migrate:latest --env production"
   },
@@ -29,6 +29,7 @@
     "pm2": "^5.2.2"
   },
   "devDependencies": {
+    "jest": "^29.4.3",
     "nodemon": "^2.0.20",
     "sqlite": "^4.1.2",
     "sqlite3": "^5.1.2"
