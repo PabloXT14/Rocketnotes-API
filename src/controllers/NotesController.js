@@ -76,7 +76,7 @@ class NotesController {
       user_id,
     })
     .then(result => {
-      return result[0].id;// Retorna o último ID inserido
+      return result[0].id;// Retorna o ID do ultimo registro inserido
     });
 
     /* INSERINDO LINKS */
