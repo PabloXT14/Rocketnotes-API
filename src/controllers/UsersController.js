@@ -1,6 +1,7 @@
 const { hash, compare } = require("bcryptjs")
 const AppError = require("../utils/AppError");
 const UserRepository = require("../repositories/UserRepository");
+const UserCreateService = require("../services/UserCreateService");
 
 const knex = require("../database/knex");
 
@@ -9,21 +10,9 @@ class UsersController {
     const { name, email, password } = request.body;
 
     const userRepository = new UserRepository();
+    const userCreateService = new UserCreateService(userRepository);
 
-    const userAlreadyExists = await userRepository.findByEmail(email);
-
-    if (userAlreadyExists) {
-      throw new AppError("Este e-mail já está em uso!")
-    }
-
-    // CRIPTOGRAFANDO SENHA DO USUÁRIO => hash(senha, fatorDeCriptografação(number))
-    const hashedPassword = await hash(password, 8);// 
-
-    await userRepository.create({
-      name,
-      email,
-      password: hashedPassword
-    });
+    await userCreateService.execute({ name, email, password });
 
     return response.status(201).json({
       message: "Usuário criado!"
