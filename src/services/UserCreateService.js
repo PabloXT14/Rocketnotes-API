@@ -17,11 +17,13 @@ class UserCreateService {
     // CRIPTOGRAFANDO SENHA DO USUÁRIO => hash(senha, fatorDeCriptografação(number))
     const hashedPassword = await hash(password, 8);// 
 
-    await this.userRepository.create({
+    const userCreated = await this.userRepository.create({
       name,
       email,
       password: hashedPassword
     });
+
+    return userCreated;
   }
 }
 
