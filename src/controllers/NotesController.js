@@ -1,5 +1,7 @@
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
+const NoteCreateService = require("../services/NoteCreateService");
+const NoteRepository = require("../repositories/NoteRepository");
 
 class NotesController {
   async index(request, response) {
@@ -67,43 +69,10 @@ class NotesController {
     const { title, description, tags, links } = request.body;
     const user_id = request.user.id;
 
-    /* INSERINDO NOTA */
-    const note_id = await knex("notes")
-    .returning('id')
-    .insert({
-      title,
-      description,
-      user_id,
-    })
-    .then(result => {
-      return result[0].id;// Retorna o ID do ultimo registro inserido
-    });
+    const noteRepository = new NoteRepository();
+    const noteCreateService = new NoteCreateService(noteRepository);
 
-    /* INSERINDO LINKS */
-    if (links && links.length > 0) {
-      const linksInsert = links.map(link => {
-        return {
-          note_id,
-          url: link,
-        }
-      })
-
-      await knex("links").insert(linksInsert)
-    }
-
-
-    /* INSERINDO TAGS */
-    if (tags && tags.length > 0) {
-      const tagsInsert = tags.map(tag => {
-        return {
-          note_id,
-          user_id,
-          name: tag,
-        }
-      })
-
-      await knex("tags").insert(tagsInsert);
-    }
+    await noteCreateService.execute({ title, description, tags, links, user_id });
 
     return response.status(201).json();
   }
