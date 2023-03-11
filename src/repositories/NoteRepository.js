@@ -1,7 +1,7 @@
 const knex = require("../database/knex");
 
 class NoteRepository {
-  async create({ title, description, tags = [], links = [], user_id }) {
+  async create({ title, description, tags, links, user_id }) {
     /* INSERINDO NOTA */
     const note_id = await knex("notes")
       .returning('id')
@@ -41,6 +41,20 @@ class NoteRepository {
     }
 
     return { id: note_id }
+  }
+
+  async show({ id, user_id }) {
+    const note = await knex("notes").where({ id }).andWhere({ user_id }).first();
+    const tags = await knex("tags").where({ note_id: id }).orderBy("name");
+    const links = await knex("links").where({ note_id: id }).orderBy("created_at");
+
+    const noteData = {
+      ...note,
+      tags,
+      links
+    }
+
+    return noteData;
   }
 }
 
