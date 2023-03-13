@@ -2,6 +2,8 @@ const { hash, compare } = require("bcryptjs")
 const AppError = require("../utils/AppError");
 const UserRepository = require("../repositories/UserRepository");
 const UserCreateService = require("../services/UserCreateService");
+const UserShowService = require("../services/UserShowService");
+const UserUpdateService = require("../services/UserUpdateService");
 
 const knex = require("../database/knex");
 
@@ -22,11 +24,10 @@ class UsersController {
   async show(request, response) {
     const user_id = request.user.id;
 
-    const user = await knex("users").where({ id: user_id }).first();
+    const userRepository = new UserRepository();
+    const userShowService = new UserShowService(userRepository);
 
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
+    const user = await userShowService.execute(user_id);
 
     return response.status(200).json(user);
   }
@@ -35,43 +36,16 @@ class UsersController {
     const { name, email, newPassword, oldPassword } = request.body;
     const user_id = request.user.id;
 
-    const user = await knex("users").where({ id: user_id }).first();
+    const userRepository = new UserRepository();
+    const userUpdateService = new UserUpdateService(userRepository);
 
-    if (!user) {
-      throw new AppError("Usuário não encontrado!")
-    }
-
-    const userWithEmailToUpdate = await knex("users").where({ email }).first();
-
-    if (userWithEmailToUpdate && userWithEmailToUpdate.id !== user.id) {
-      throw new AppError("Este e-mail já está em uso!");
-    }
-
-    user.name = name ?? user.name;
-    user.email = email ?? user.email;
-
-    // VERIFICAÇÃO DE ATUALIZAÇÃO DE SENHA
-    if (newPassword && !oldPassword) {
-      throw new AppError("Você precisa informar a senha antiga para definir a nova senha!");
-    }
-
-    if (newPassword && oldPassword) {
-
-      const isOldPasswordCorrect = await compare(oldPassword, user.password);
-
-      if (!isOldPasswordCorrect) {
-        throw new AppError("A senha antiga não confere!");
-      }
-
-      user.password = await hash(newPassword, 8);
-    }
-
-    await knex("users")
-      .update({
-        ...user,
-        updated_at: knex.fn.now()
-      })
-      .where({ id: user.id });
+    await userUpdateService.execute({
+      name,
+      email,
+      newPassword,
+      oldPassword,
+      user_id
+    });
 
     return response.status(200).json({ message: "Usuário atualizado!" })
   }

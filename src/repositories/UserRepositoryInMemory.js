@@ -19,6 +19,26 @@ class UserRepositoryInMemory {
 
     return user;
   }
+
+  async findByUserId(userId) {
+    const user = this.user.find(user => user.id === userId);
+
+    return user;
+  }
+
+  async update(user) {
+    this.user = this.user.map(actualUser => {
+      if (actualUser.id === user.id) {
+        return user;
+      }
+
+      return actualUser;
+    });
+
+    const userUpdated = this.user.find(actualUser => actualUser.id === user.id);
+
+    return userUpdated;
+  }
 }
 
 module.exports = UserRepositoryInMemory;
