@@ -3,12 +3,12 @@ const NoteCreateService = require("./NoteCreateService");
 const AppError = require("../utils/AppError");
 
 describe("NoteCreateService", () => {
-  let noteRepositoryInMemory = null;
+  let noteRepository = null;
   let noteCreateService = null;
 
   beforeEach(() => {
-    noteRepositoryInMemory = new NoteRepositoryInMemory();
-    noteCreateService = new NoteCreateService(noteRepositoryInMemory);
+    noteRepository = new NoteRepositoryInMemory();
+    noteCreateService = new NoteCreateService(noteRepository);
   });
 
   it("should be able to create a note", async () => {

@@ -4,14 +4,14 @@ const UserCreateService = require("./UserCreateService");
 const AppError = require("../utils/AppError");
 
 describe("UserShowService", () => {
-  let userRepositoryInMemory = null; 
+  let userRepository = null; 
   let userShowService = null; 
   let userCreateService = null; 
 
   beforeEach(() => {
-    userRepositoryInMemory = new UserRepositoryInMemory();
-    userShowService = new UserShowService(userRepositoryInMemory);
-    userCreateService = new UserCreateService(userRepositoryInMemory);
+    userRepository = new UserRepositoryInMemory();
+    userShowService = new UserShowService(userRepository);
+    userCreateService = new UserCreateService(userRepository);
   });
 
   it("should be able to show a user", async () => {
