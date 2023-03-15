@@ -1,3 +1,5 @@
+const { hash } = require("bcryptjs");
+
 class UserRepositoryInMemory {
   user = [];
 
@@ -6,7 +8,7 @@ class UserRepositoryInMemory {
       id: this.user.length + 1,
       name,
       email,
-      password
+      password: await hash(password, 8),
     };
 
     this.user.push(user);
