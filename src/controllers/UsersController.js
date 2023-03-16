@@ -1,11 +1,7 @@
-const { hash, compare } = require("bcryptjs")
-const AppError = require("../utils/AppError");
 const UserRepository = require("../repositories/UserRepository");
 const UserCreateService = require("../services/UserCreateService");
 const UserShowService = require("../services/UserShowService");
 const UserUpdateService = require("../services/UserUpdateService");
-
-const knex = require("../database/knex");
 
 class UsersController {
   async create(request, response) {

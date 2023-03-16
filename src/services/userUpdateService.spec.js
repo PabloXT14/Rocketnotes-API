@@ -68,24 +68,59 @@ describe("UserUpdateService", () => {
     const userCreated = await userRepository.create(user);
     await userRepository.create(user2);
 
-    const userUpdatedData = {
+    const userUpdateData = {
       user_id: userCreated.id,
       name: "User Test Updated",
       email: user2.email,
-      newPassword: "321",
-      oldPassword: "123",
+      password: "321",
+      oldPassword: user.password,
     }
 
-    await expect(userUpdateService.execute(userUpdatedData)).rejects.toEqual(
+    await expect(userUpdateService.execute(userUpdateData)).rejects.toEqual(
       new AppError("Este e-mail já está em uso!")
     );
   });
 
   it("should not be able to update user's password without the old password", async () => {
-    expect(2+2).toBe(5);
+    const user = {
+      name: "User Test",
+      email: "user@test.com",
+      password: "123"
+    }
+
+    const userCreated = await userRepository.create(user);
+
+    const userUpdateData = {
+      user_id: userCreated.id,
+      name: "User Test Updated",
+      email: "userupdated@test.com",
+      newPassword: "321",
+    }
+
+    await expect(userUpdateService.execute(userUpdateData)).rejects.toEqual(
+      new AppError("Você precisa informar a senha antiga para atualizar os dados!")
+    );
   });
 
   it("should not be able to update user if the old password is wrong", async () => {
-    expect(2+2).toBe(5);
+    const user = {
+      name: "User Test",
+      email: "user@test.com",
+      password: "123"
+    }
+
+    const userCreated = await userRepository.create(user);
+
+    const userUpdateData = {
+      user_id: userCreated.id,
+      name: "User Test Updated",
+      email: "userupdated@test.com",
+      password: "321",
+      newPassword: "321",
+    }
+
+    await expect(userUpdateService.execute(userUpdateData)).rejects.toEqual(
+      new AppError("Senha antiga incorreta!")
+    );
   });
 })

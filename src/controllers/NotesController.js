@@ -1,49 +1,24 @@
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
-const NoteCreateService = require("../services/NoteCreateService");
 const NoteRepository = require("../repositories/NoteRepository");
+const NoteCreateService = require("../services/NoteCreateService");
+const NoteListAllService = require("../services/NoteListAllService");
 
 class NotesController {
   async index(request, response) {
-    const { title = "", tags } = request.query;
+    const { title, tags } = request.query;
     const user_id = request.user.id;
 
-    let notes;
+    const noteRepository = new NoteRepository();
+    const noteListAllService = new NoteListAllService(noteRepository);
 
-    if (tags) {
-      const filterTags = tags.split(",").map(tag => tag.trim());
+    const notes = await noteListAllService.execute({
+      user_id,
+      title,
+      tags,
+    });
 
-      notes = await knex("tags")
-        .select([
-          "notes.id",
-          "notes.title",
-          "notes.description",
-          "notes.user_id",
-        ])
-        .where("notes.user_id", user_id)
-        .whereILike("notes.title", `%${title}%`)
-        .whereIn("tags.name", filterTags)
-        .innerJoin("notes", "notes.id", "tags.note_id")// InnerJoin(tabela extrangeira, campo da tab ex., campo da tab. atual)
-        .groupBy("notes.id")
-        .orderBy("notes.title")
-    } else {
-      notes = await knex("notes")
-        .where({ user_id })
-        .whereILike("title", `%${title}%`)
-        .orderBy("title");
-    }
-
-    const userTags = await knex("tags").where({ user_id });
-    const notesWithTags = notes.map(note => {
-      const noteTags = userTags.filter(tag => tag.note_id === note.id);
-
-      return {
-        ...note,
-        tags: noteTags,
-      }
-    })
-
-    return response.status(200).json(notesWithTags);
+    return response.status(200).json(notes);
   }
 
   async show(request, response) {
