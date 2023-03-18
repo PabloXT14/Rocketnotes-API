@@ -1,5 +1,6 @@
 const NoteRepositoryInMemory = require("../repositories/NoteRepositoryInMemory");
 const NoteListAllService = require("./NoteListAllService");
+const AppError = require("../utils/AppError");
 
 describe("NoteListAllService", () => {
   let noteRepository;
@@ -36,7 +37,15 @@ describe("NoteListAllService", () => {
     expect(notesSearched).toEqual([note1, note2]);
   });
 
-  it("should not be able to list notes without a user id", () => {
-    expect(2 + 2).toBe(4);
+  it("should not be able to list notes without a user id", async () => {
+    const notesSearch = {
+      user_id: null,
+      title: "",
+      tags: [],
+    }
+
+    await expect(noteListAllService.execute(notesSearch)).rejects.toEqual(
+      new AppError("O ID do usuário não pode ser nulo!")
+    );
   });
 })
