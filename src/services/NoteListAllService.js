@@ -5,7 +5,7 @@ class NoteListAllService {
     this.noteRepository = noteRepository;
   }
 
-  async execute({ user_id, title = "", tags = [] }) {
+  async execute({ user_id = null, title = "", tags = [] }) {
     const noteUserIdIsNull = user_id === null;
 
     if (noteUserIdIsNull) throw new AppError("O ID do usuário não pode ser nulo!");

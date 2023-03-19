@@ -47,6 +47,17 @@ class NoteRepositoryInMemory {
 
     return notes;
   }
+
+  async delete({ id, user_id }) {
+    const noteIndex = this.notes.findIndex(note => note.id === id && note.user_id === user_id);
+
+    if (noteIndex > -1) {
+      this.notes.splice(noteIndex, 1);
+      return true;
+    }
+
+    return false;
+  }
 }
 
 module.exports = NoteRepositoryInMemory;

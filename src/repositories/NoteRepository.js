@@ -95,6 +95,18 @@ class NoteRepository {
 
     return notesWithTags;
   }
+
+  async delete({ id, user_id }) {
+    const isNoteDeleted = await knex("notes")
+    .where({ id })
+    .andWhere({ user_id })
+    .delete()
+    .then(rowsExcluded => {
+      return rowsExcluded;
+    });
+
+    return isNoteDeleted ? true : false;
+  }
 }
 
 module.exports = NoteRepository;
